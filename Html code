@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #search-container {
+            margin-bottom: 20px;
+        }
+
+        #filter-container {
+            margin-bottom: 20px;
+        }
+
+        .employee-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .employee-card h3 {
+            margin-top: 0;
+        }
+
+        .employee-card p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Employee Directory</h1>
+
+    <div id="search-container">
+        <label for="search-input">Search by Name:</label>
+        <input type="text" id="search-input" placeholder="Enter name">
+        <button id="search-button">Search</button>
+    </div>
+
+    <div id="filter-container">
+        <label for="designation-filter">Filter by Designation:</label>
+        <select id="designation-filter">
+            <option value="">All</option>
+            <option value="Senior Developer">Senior Developer</option>
+            <option value="QA Engineer">QA Engineer</option>
+            <option value="Project Manager">Project Manager</option>
+        </select>
+
+        <label for="skills-filter">Filter by Skills:</label>
+        <select id="skills-filter">
+            <option value="">All</option>
+            <option value="JavaScript">JavaScript</option>
+            <option value="Python">Python</option>
+            <option value="Java">Java</option>
+            <option value="HTML">HTML</option>
+            <option value="CSS">CSS</option>
+            <option value="Photoshop">Photoshop</option>
+            <option value="Manual Testing">Manual Testing</option>
+            <option value="SQL">SQL</option>
+        </select>
+
+        <button id="filter-button">Filter</button>
+    </div>
+
+    <div id="employees-container"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const employees = ${JSON.stringify(employees)};
+
+            const searchButton = document.getElementById("search-button");
+            const searchInput = document.getElementById("search-input");
+
+            const filterButton = document.getElementById("filter-button");
+            const designationFilter = document.getElementById("designation-filter");
+            const skillsFilter = document.getElementById("skills-filter");
+
+            const employeesContainer = document.getElementById("employees-container");
+
+            function renderEmployees(filteredEmployees) {
+                employeesContainer.innerHTML = "";
+
+                if (filteredEmployees.length === 0) {
+                    employeesContainer.innerHTML = "<p>No employees found.</p>";
+                    return;
+                }
+
+                filteredEmployees.forEach(function(employee) {
+                    const employeeCard = document.createElement("div");
+                    employeeCard.classList.add("employee-card");
+
+                    const name = document.createElement("h3");
+                    name.textContent = employee.name || "Unknown";
+
+                    const designation = document.createElement("p");
+                    designation.textContent = "Designation: " + (employee.designation || "Not specified");
+
+                    const skills = document.createElement("p");
+                    skills.textContent = "Skills: " + (employee.skills.length > 0 ? employee.skills.join(", ") : "None");
+
+                    const projects = document.createElement("p");
+                    projects.textContent = "Projects: " + (employee.projects ? employee.projects.length : 0);
+
+                    employeeCard.appendChild(name);
+                    employeeCard.appendChild(designation);
+                    employeeCard.appendChild(skills);
+                    employeeCard.appendChild(projects);
+
+                    employeesContainer.appendChild(employeeCard);
+                });
+            }
+
+            function searchByName() {
+                const searchValue = searchInput.value.toLowerCase();
+                const filteredEmployees = employees.filter(function(employee) {
+                    return employee.name.toLowerCase().includes(searchValue);
+                });
+                renderEmployees(filteredEmployees);
+            }
+
+            function filterByDesignationSkills() {
+                const designationValue = designationFilter.value;
+                const skillsValue = skillsFilter.value;
+
+                const filteredEmployees = employees.filter(function(employee) {
+                    if (designationValue && employee.designation !== designationValue) {
+                        return false;
+                    }
+
+                    if (skillsValue && !employee.skills.includes(skillsValue)) {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+                renderEmployees(filteredEmployees);
+            }
+
+            searchButton.addEventListener("click", searchByName);
+            searchInput.addEventListener("keyup", function(event) {
+                if (event.key === "Enter") {
+                    searchByName();
+                }
+            });
+
+            filterButton.addEventListener("click", filterByDesignationSkills);
+
+            // Initial rendering of all employees
+            renderEmployees(employees);
+        });
+    </script>
+</body>
+</html>
